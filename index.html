@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Success Mirror</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body{background:linear-gradient(135deg,#3a7bd5,#3a6073);min-height:100vh;
+     display:flex;justify-content:center;align-items:center;overflow:hidden;}
+#splash{position:fixed;inset:0;display:flex;flex-direction:column;
+        justify-content:center;align-items:center;
+        background:linear-gradient(135deg,#3a7bd5,#3a6073);
+        animation:fadeOut 1s ease 3s forwards;z-index:99;}
+#splash img{width:120px;animation:pop 1s ease;}
+#splash h1{color:#fff;font-size:2.2rem;margin-top:20px;text-shadow:0 4px 10px rgba(0,0,0,.3);}
+@keyframes pop{0%{transform:scale(0);opacity:0;}100%{transform:scale(1);opacity:1;}}
+@keyframes fadeOut{to{opacity:0;visibility:hidden;pointer-events:none;}}
+.panel{
+  position:absolute;width:100%;max-width:900px;
+  background:rgba(255,255,255,0.08);backdrop-filter:blur(10px);
+  border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.25);
+  padding:28px;color:#fff;text-align:center;
+  opacity:0;transform:translateY(40px);
+  transition:all .5s ease;pointer-events:none;
+}
+.panel.active{opacity:1;transform:translateY(0);pointer-events:auto;}
+.panel h2{margin-bottom:16px;font-weight:600;}
+button{
+  background:#fff;color:#3a6073;border:none;border-radius:8px;
+  padding:10px 18px;font-weight:600;font-size:1rem;
+  cursor:pointer;transition:.25s;margin:10px 0;
+}
+button:hover{background:#3a7bd5;color:#fff;}
+.links{margin-top:12px;font-size:.9rem;}
+.links a{color:#fff;text-decoration:underline;cursor:pointer;}
+.input-group{text-align:left;margin-bottom:14px;}
+.input-group label{font-size:.9rem;margin-bottom:6px;display:block;}
+.input-group input{
+  width:100%;padding:12px;border:none;border-radius:8px;
+  background:rgba(255,255,255,0.06);color:#fff;font-size:1rem;
+}
+.input-group input::placeholder{color:#e0e0e0;}
+.grid{display:grid;gap:18px;justify-items:center;}
+.cards{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));width:100%;}
+.subjects{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));width:100%;}
+.resources{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));width:100%;}
+.chapters{grid-template-columns:repeat(auto-fit,minmax(160px,1fr));width:100%;}
+.card,.subject,.resource,.chapter{
+  background:rgba(255,255,255,0.12);
+  border-radius:12px;padding:18px 12px;color:#fff;
+  font-size:1.05rem;font-weight:600;cursor:pointer;
+  transition:transform .2s, background .2s;box-shadow:0 6px 18px rgba(0,0,0,0.25);
+  width:100%;text-align:center;
+}
+.card:hover,.subject:hover,.resource:hover,.chapter:hover{
+  transform:translateY(-6px);background:rgba(255,255,255,0.18);
+}
+.card.disabled,.chapter.disabled,.subject.disabled{position:relative;cursor:default;opacity:0.7;}
+.card.disabled::after,.chapter.disabled::after,.subject.disabled::after{
+  content:"Coming Soon 🔒";
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;
+  font-size:0.95rem;font-weight:700;border-radius:12px;color:#fff;
+}
+.backBtn{margin-bottom:12px;}
+.small{font-size:0.9rem;color:rgba(255,255,255,0.9);margin-top:8px;}
+/* Style for injected resource links */
+.resource-link{
+  display:block;
+  background:rgba(255,255,255,0.12);
+  border-radius:8px;
+  padding:15px;
+  margin:10px 0;
+  text-decoration:none;
+  color:#fff;
+  font-weight:600;
+  transition:.2s;
+}
+.resource-link:hover{
+  background:rgba(255,255,255,0.25);
+  transform:scale(1.02);
+}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <img src="https://i.ibb.co/bRrftkgC/1758450615971.png" alt="Logo">
+  <h1>Success Mirror</h1>
+  <div class="small">Tuition study material</div>
+</div>
+
+<div id="loginPanel" class="panel">
+  <h2>Welcome Back 👋</h2>
+  <div class="input-group"><label>Email</label>
+    <input type="email" id="loginEmail" placeholder="Enter your email"></div>
+  <div class="input-group"><label>Password</label>
+    <input type="password" id="loginPass" placeholder="Enter password"></div>
+  <button onclick="signIn()">Login</button>
+  <div class="links">
+    <a onclick="showPanel('signupPanel')">Create account</a> |
+    <a onclick="showPanel('forgotPanel')">Forgot password?</a>
+  </div>
+</div>
+
+<div id="signupPanel" class="panel">
+  <h2>Create Account ✨</h2>
+  <div class="input-group"><label>Email</label>
+    <input type="email" id="signupEmail" placeholder="Enter email"></div>
+  <div class="input-group"><label>Password (min 6 chars)</label>
+    <input type="password" id="signupPass" placeholder="Enter password"></div>
+  <button onclick="signUp()">Sign Up</button>
+  <div class="links"><a onclick="showPanel('loginPanel')">Back to login</a></div>
+</div>
+
+<div id="forgotPanel" class="panel">
+  <h2>Reset Password 🔑</h2>
+  <div class="input-group"><label>Email</label>
+    <input type="email" id="resetEmail" placeholder="Enter your email"></div>
+  <button onclick="forgotPass()">Send Reset Link</button>
+  <div class="links"><a onclick="showPanel('loginPanel')">Back to login</a></div>
+</div>
+
+<div id="homePanel" class="panel">
+  <h2>Welcome to Success Mirror 🎯</h2>
+  <button class="backBtn" onclick="logOut()">Log Out</button>
+  <div class="grid cards">
+    <div class="card" onclick="openResources('Science')">Class 9</div>
+    <div class="card disabled">Class 10</div>
+    <div class="card disabled">Class 11</div>
+    <div class="card disabled">Class 12</div>
+  </div>
+</div>
+
+<div id="subjectsPanel" class="panel">
+  <h2>Class 9 Subjects 📚</h2>
+  <button class="backBtn" onclick="showPanel('homePanel')">⬅ Back</button>
+  <div class="grid subjects">
+    <div class="subject" onclick="openResources('Science')">Science</div>
+    <div class="subject" onclick="openResources('English')">English</div>
+    <div class="subject disabled" title="Coming soon">Hindi</div>
+    <div class="subject" onclick="openResources('Math')">Math</div>
+    <div class="subject" onclick="openResources('Social Science')">Social Science</div>
+    <div class="subject disabled" title="Coming soon">Sanskrit</div>
+    <div class="subject disabled" title="Coming soon">AI / IT / PE</div>
+  </div>
+</div>
+
+<div id="resourcesPanel" class="panel">
+  <h2 id="resourceTitle">Resources</h2>
+  <button class="backBtn" onclick="showPanel('subjectsPanel')">⬅ Back</button>
+  <div id="resourceGrid" class="grid resources"></div>
+</div>
+
+<div id="chapterPanel" class="panel">
+  <h2 id="chapterTitle">Chapters</h2>
+  <button class="backBtn" onclick="backToResources()">⬅ Back</button>
+  <div id="chapterGrid" class="grid chapters"></div>
+</div>
+
+<div id="detailPanel" class="panel">
+  <h2 id="detailTitle">Chapter Details</h2>
+  <button class="backBtn" onclick="backToChapters()">⬅ Back</button>
+  <div id="detailContent" style="margin-top: 20px;">
+    </div>
+</div>
+
+<script type="module">
+/* ================= Firebase imports ================= */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+/* ================= Firebase config (your keys) ================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyBrAPj473on9DbbbAXzsK7nRTTdyx8HlJ8",
+  authDomain: "success-mirror-707ad.firebaseapp.com",
+  projectId: "success-mirror-707ad",
+  storageBucket: "success-mirror-707ad.firebasestorage.app",
+  messagingSenderId: "964747672155",
+  appId: "1:964747672155:web:d7bc8e7acf55bfd259dd7e",
+  measurementId: "G-Z8N3FH59MY"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+/* ================= Utility: safe element getter ================= */
+const $ = id => document.getElementById(id);
+
+/* ================= Panel show/hide (uses .active class like your CSS) ================= */
+function showPanel(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  const el = document.getElementById(id);
+  if(el) el.classList.add('active');
+}
+window.showPanel = showPanel;
+
+/* ================= Splash → login timing (sync with your CSS animation) ================= */
+setTimeout(()=>{ showPanel('loginPanel'); }, 4200); // splash ~3s + fade; 4200ms safe
+
+/* ================= Locked subjects ================= */
+const LOCKED_SUBJECTS = new Set(["Hindi","Sanskrit","AI / IT / PE"]);
+
+/* ================= Common resources (Questions removed) ================= */
+const commonResources = ["Notes","Sample Paper","NCERT PDF","Lecture"];
+
+/* ================= Mid Term sample PDF links (open in new tab) ================= */
+const midTermLinks = {
+  "Hindi":"https://drive.google.com/file/d/1-Cg0_AEz5BDjiK9KHRxQmsyh1G4THm92/view?usp=drivesdk",
+  "Math":"https://drive.google.com/file/d/1-BGlS8R_QqArZI4a5oLKPnblp8DTcd8Z/view?usp=drivesdk",
+  "Social Science":"https://drive.google.com/file/d/1-L-RFptmE18Fyu02oQ1HFEes15jVije1/view?usp=drivesdk",
+  "Sanskrit":"https://drive.google.com/file/d/1-6g0s1Y3M1-oXCN4RZpsNBk_1CEZU-9-/view?usp=drivesdk",
+  "Science":"https://drive.google.com/file/d/1-2aVMzvOEXoxwpPAjjxA_lFkKUUWtWVq/view?usp=drivesdk",
+  "English":"https://drive.google.com/file/d/1-HWPkTzxD-1jYYRvV5jrHt6HowHXCp2_/view?usp=drivesdk"
+};
+
+/* ================= NCERT shortcuts ================= */
+const ncertLinks = {
+  "Science":"https://drive.google.com/file/d/1MhSS6yVdtlIB3LPoakSRdVBBeoZunJBg/view?usp=drivesdk",
+  "Math":"https://drive.google.com/file/d/1H_XbswI2KhW7It98kQeN4yZVEWYPuj7k/view?usp=drivesdk",
+  "EnglishBeehive":"https://drive.google.com/file/d/1lfT8x70ehiK8sNCsrm8IcRaGgfNmxpw-/view?usp=drivesdk",
+  "Moments":"https://drive.google.com/file/d/1FRrrtHGlINN1tqD9LS0oQeNNrNMyA8_t/view?usp=drivesdk",
+  "History":"https://drive.google.com/file/d/15KcpA1ViKL93fa6f4tTz4c03sAOfq10h/view?usp=drivesdk",
+  "Geography":"https://drive.google.com/file/d/12h05xPyke6LcrS5aPWNH-lwPRpuPDv3f/view?usp=drivesdk",
+  "Civics":"https://drive.google.com/file/d/1Z-xbcq8umUudMhzHWOh0D6sCT98-qdV5/view?usp=drivesdk",
+  "Economics":"https://drive.google.com/file/d/1PRt0kIFz09K3njXISlo_pynLhtJ-LjMi/view?usp=drivesdk"
+};
+
+/* ================= Full resources data (notes + lecture) ================= */
+const resourcesData = {
+  "Science": {
+    "NCERT": { notes: ncertLinks["Science"] },
+    "Matter In our Surrounding": { notes: "https://drive.google.com/file/d/1wmoOhla2b5IBuHLlJgZ3wapp8PQ6dUHK/view?usp=drivesdk", lecture: "https://youtu.be/bmzDsWMSCTk?si=7pRvdfaiQ1VJmIOT" },
+    "Is Matter Around Us Pure": { notes: "https://drive.google.com/file/d/1gDvV3OluHtANpjm37LMGw-Ah6G00kpF/view?usp=drivesdk", lecture: "https://youtu.be/fDTLrhcIWx0?si=Aw5Ay7R3IABMq9Cb" },
+    "Atom and Molecule": { notes: "https://drive.google.com/file/d/1HSZeYHym1T1nEomPmTcX-M14Q2JCBUO0/view?usp=drivesdk", lecture: "https://youtu.be/Jy2bLuZU8ps?si=0b0jSu0AYBeZToI" },
+    "Structure of Atom": { notes: "https://drive.google.com/file/d/1DXWZcUVAR-E0IP__w2PM9i8TNQMs_g8/view?usp=drivesdk", lecture: "https://youtu.be/0UqHoagKXts?si=XuNhCE5cBGDESCOV" },
+    "The Fundamental Unit of Life": { notes: "https://drive.google.com/file/d/1YpL8peCFbgvK7VsKyiWH4pzY9BLXEV84/view?usp=drivesdk", lecture: "https://youtu.be/3YuuphvXYmo?si=0HM1ge55u0siqehn" },
+    "Tissue": { notes: "https://drive.google.com/file/d/1Fr3xd6aWUzx6yfnDV_JlIdNybgUVy-Fa/view?usp=drivesdk", lecture: "https://youtu.be/RJsLw5cmbP8?si=IdrOPrOXmKDXZ04E" },
+    "Motion": { notes: "https://drive.google.com/file/d/1e7pYaYdAaTWA0kIBQlRpqpnIN8K-Ts_o/view?usp=drivesdk", lecture: "https://youtu.be/jC6MW9KOQvU?si=k3i6IgX-ISWwov7F" },
+    "Force and Law of Motion": { notes: "https://drive.google.com/file/d/1WNrS7XzmAawXuK9mOLGLtYjKHqUiGqS6/view?usp=drivesdk", lecture: "https://youtu.be/CfxfW64P04s?si=MAD5wWfrL6aPUYvW" },
+    "Gravitation": { notes: "https://drive.google.com/file/d/1Lqy2EC509XPiOBubGmj-41_m29C91b7x/view?usp=drivesdk", lecture: "https://youtu.be/yeFQ2Ce_nKo?si=SneKlxjknMoHpX0a" },
+    "Work, Power and Energy": { notes: "https://drive.google.com/file/d/1gOeDIBVPSQNji68Sn6vjhjETfh06fUPs/view?usp=drivesdk", lecture: "https://youtu.be/bGFE2Z-VVM8?si=B2HY89vTlm-hxZHf" },
+    "Sound": { notes: "https://drive.google.com/file/d/1rIaaYPoVaMn6H88L9HwKkQ-J5MzgzuoD/view?usp=drivesdk", lecture: "https://youtu.be/UpXKKEbCByA?si=mfFUpqkVSdPTRNp" },
+    "Improvement In Food Resources": { notes: "https://drive.google.com/file/d/1VrSFE6rJe4yC1cigcWRa6q3116Y6sHiZ/view?usp=drivesdk", lecture: "https://youtu.be/py7rvl_znRs?si=OeIbl06-Msbffoxp" }
+  },
+
+  "Math": {
+    "NCERT": { notes: ncertLinks["Math"] },
+    "Number System": { notes: "https://drive.google.com/file/d/1NgvXXhSg4f6kwmnbBg99-IoOTwDLQIFy/view?usp=drivesdk", lecture: "https://youtu.be/IMnSIaPcqiE?si=85bpY__YgbjTy9Jo" },
+    "Polynomial": { notes: "https://drive.google.com/file/d/1O9LQVKtVaU0nM-O9e4cf4jAJm18CMeNY/view?usp=drivesdk", lecture: "https://youtu.be/4VHrvMutJQw?si=PhURmG229W1aTMmr" },
+    "Co-ordinate Geometry": { notes: "https://drive.google.com/file/d/167-jayj-tEwX9aCFG4Pr8icxf98p1MO8/view?usp=drivesdk", lecture: "https://youtu.be/3MIZUl6bWxY?si=lbGgCTv1cP3OMU0j" },
+    "Linear equations in two variable": { notes: "https://drive.google.com/file/d/1S7IXSaUvCprtlCrbPu4Q1zZsMgigQEla/view?usp=drivesdk", lecture: "https://youtu.be/rnudiJxVXxM?si=v6ClWzlTbu3-WlDo" },
+    "Introduction to Euclid's Geometry": { notes: "https://drive.google.com/file/d/1iQpLbv0uQ0jkobnbHORwEMbKEJyMFM7Y/view?usp=drivesdk", lecture: "https://youtu.be/mxeXcTjQiuM?si=wzSC7HeRXTL_QK0_" },
+    "Lines and angles": { notes: "https://drive.google.com/file/d/1Wjjzdim1csTjqlRNAIrGxk5HymGJ4xM7/view?usp=drivesdk", lecture: "https://youtu.be/nEYldznpZmk?si=Y4IrH9BG-pq88Usg" },
+    "Triangles": { notes: "https://drive.google.com/file/d/1FiF6EL95zw3BAISaWl33-INEtyloJ9YB/view?usp=drivesdk", lecture: "https://youtu.be/wIeiqvdVCJI?si=nrFJVPnHKXTGLPCF" },
+    "Quadrilaterals": { notes: "https://drive.google.com/file/d/1E5VD7if_yTA0LDC0svrJF_4eKngZQIGP/view?usp=drivesdk", lecture: "https://youtu.be/STrfPXdTzUA?si=4cKrQn-h1YGXBAL7" },
+    "Circle": { notes: "https://drive.google.com/file/d/1e18xifvW6Zur2NDWRrI-9qMPJTH4pOQg/view?usp=drivesdk", lecture: "https://youtu.be/mCWjZ5q58u8?si=KBQu_lPvisgjnipd" },
+    "Heron's Formula": { notes: "https://drive.google.com/file/d/1s_XmGcKDSv18CXpn-zUuB_ZWrDtj9kse/view?usp=drivesdk", lecture: "https://youtu.be/xovtUr4TN6Y?si=vOqDSicv9Umz_qyi" },
+    "Surface area and volume": { notes: "https://drive.google.com/file/d/17XGuWOMvzZgN0J7SZM_db-jXNk442zvG/view?usp=drivesdk", lecture: "https://youtu.be/CqkDFwAZlC4?si=cijH_46aGYBe4Ngj" },
+    "Statistics": { notes: "https://drive.google.com/file/d/1Z0lkhCrBV2m6PdKSOZOQ07k0ccqE0r9Y/view?usp=drivesdk", lecture: "https://youtu.be/Ol-y2HO18Kg?si=FCz9KR4Z5SsQ7zan" }
+  },
+
+  "English": {
+    "NCERT_Beehive": { notes: ncertLinks["EnglishBeehive"] },
+    "NCERT_Moments": { notes: ncertLinks["Moments"] },
+    "The Fun They Had": { notes: "https://drive.google.com/file/d/1s_PByxdglOHJVyZy5M_ekJUvjlGfU4X4/view?usp=drivesdk", lecture: "https://www.youtube.com/live/VcuW77DDjxs?si=NKxFwm6xuGIQhAZ4" },
+    "The Sound of Music": { notes: "https://drive.google.com/file/d/1EGkaxuhbSXPN5q1Dnxh0i1Eu_TG93aLU/view?usp=drivesdk", lecture: "https://www.youtube.com/live/VcuW77DDjxs?si=NKxFwm6xuGIQhAZ4" },
+    "The Little Girl": { notes: "https://drive.google.com/file/d/14dcDaAzE2mwJgGUF100LiIvh1aS3wAwM/view?usp=drivesdk", lecture: "https://www.youtube.com/live/VcuW77DDjxs?si=NKxFwm6xuGIQhAZ4" },
+    "A Truly Beautiful Mind": { notes: "https://drive.google.com/file/d/1zRv2pxZICUgKX5QdC_XZVHuDa8nAL1YV/view?usp=drivesdk", lecture: "https://www.youtube.com/live/VcuW77DDjxs?si=NKxFwm6xuGIQhAZ4" },
+    "The Snake and the Mirror": { notes: "https://drive.google.com/file/d/162fiMHB9Po5RhNMeTLwa3k202IddUV6H/view?usp=drivesdk", lecture: "https://www.youtube.com/live/VcuW77DDjxs?si=NKxFwm6xuGIQhAZ4" },
+    "My Childhood": { notes: "https://drive.google.com/file/d/1udw9XLtkGoP0O3JGNmiA1QumSnSHeF7D/view?usp=drivesdk", lecture: "https://www.youtube.com/live/VcuW77DDjxs?si=NKxFwm6xuGIQhAZ4" },
+    "Reach for the Top": { notes: "https://drive.google.com/file/d/1BVAHMb2etSygXzg8gKWmM9ryZEnWsGp-/view?usp=drivesdk", lecture: "https://www.youtube.com/live/VcuW77DDjxs?si=NKxFwm6xuGIQhAZ4" },
+    "Kathmandu": { notes: "https://drive.google.com/file/d/1GkK3fPPEsYUC2arUGSAaabxGYbxGFmT8/view?usp=drivesdk", lecture: "https://www.youtube.com/live/VcuW77DDjxs?si=NKxFwm6xuGIQhAZ4" },
+    "If I Were You": { notes: "https://drive.google.com/file/d/1q8scaoo9W3QlHYHGR_gfEKwcASQrqALr/view?usp=drivesdk", lecture: "https://www.youtube.com/live/VcuW77DDjxs?si=NKxFwm6xuGIQhAZ4" },
+
+    "The Road Not Taken": { notes: "https://drive.google.com/file/d/1wBzqTwrIFB9J1X7sTKarTZKKRhcnqg6K/view?usp=drivesdk", lecture: "https://www.youtube.com/live/ZtCB0xy86yo?si=VI1yBQIJb7wBzln6" },
+    "Wind": { notes: "https://drive.google.com/file/d/1Lm3DT-4TPGOZNLCK6TXTDLPUjPLxDfrg/view?usp=drivesdk", lecture: "https://www.youtube.com/live/ZtCB0xy86yo?si=VI1yBQIJb7wBzln6" },
+    "Rain on the Roof": { notes: "https://drive.google.com/file/d/1sQ6Er8Uoj27knebGCNB3uhwMQbJheTw0/view?usp=drivesdk", lecture: "https://www.youtube.com/live/ZtCB0xy86yo?si=VI1yBQIJb7wBzln6" },
+    "The Lake Isle of Innisfree": { notes: "https://drive.google.com/file/d/1y9clgqoLUUJhojzyGVaZriOeVxodCeIL/view?usp=drivesdk", lecture: "https://www.youtube.com/live/ZtCB0xy86yo?si=VI1yBQIJb7wBzln6" },
+    "A Legend of the Northland": { notes: "https://drive.google.com/file/d/1suJXHrQcZRD0t3wadWoB5Wpzp9uXCDGa/view?usp=drivesdk", lecture: "https://www.youtube.com/live/ZtCB0xy86yo?si=VI1yBQIJb7wBzln6" },
+    "No Men Are Foreign": { notes: "https://drive.google.com/file/d/15P_fMxb2pK80h3se2JaiGDbjdKlk--_g/view?usp=drivesdk", lecture: "https://www.youtube.com/live/ZtCB0xy86yo?si=VI1yBQIJb7wBzln6" },
+    "On Killing a Tree": { notes: "https://drive.google.com/file/d/116-WLb4QAmtY3ZSMICyFXyyDmZvmrE5k/view?usp=drivesdk", lecture: "https://www.youtube.com/live/ZtCB0xy86yo?si=VI1yBQIJb7wBzln6" },
+    "A Slumber Did My Spirit Seal": { notes: "https://drive.google.com/file/d/11sLPQ6QXT3FJIjxmGsuXbzwEvg857eZP/view?usp=drivesdk", lecture: "https://www.youtube.com/live/ZtCB0xy86yo?si=VI1yBQIJb7wBzln6" },
+
+    "The Lost Child": { notes: "https://drive.google.com/file/d/1SirRfpO-eN2qNKeoumLALBFmcUV0tIbB/view?usp=drivesdk", lecture: "https://www.youtube.com/live/D_E1ri8PnYQ?si=YecB-wWoY5-6wgcg" },
+    "The Adventure of Toto": { notes: "https://drive.google.com/file/d/1EvojuwlKN5NXH2BplPkziq85FZ9ezVgP/view?usp=drivesdk", lecture: "https://www.youtube.com/live/D_E1ri8PnYQ?si=YecB-wWoY5-6wgcg" },
+    "Iswaran the Story Teller": { notes: "https://drive.google.com/file/d/1K_1-W5-CcwCsThC1wNi1m1UHMLWxPmUO/view?usp=drivesdk", lecture: "https://www.youtube.com/live/D_E1ri8PnYQ?si=YecB-wWoY5-6wgcg" },
+    "In the Kingdom of Fools": { notes: "https://drive.google.com/file/d/1mb2iUi9ae07paF8U1ILorxPAnrOPlNYC/view?usp=drivesdk", lecture: "https://www.youtube.com/live/D_E1ri8PnYQ?si=YecB-wWoY5-6wgcg" },
+    "The Happy Prince": { notes: "https://drive.google.com/file/d/1iSj-h7I4-4zl6s-saJF_HhlPvnh_sMOE/view?usp=drivesdk", lecture: "https://www.youtube.com/live/D_E1ri8PnYQ?si=YecB-wWoY5-6wgcg" },
+    "Weathering the Storm in Ersama": { notes: "https://drive.google.com/file/d/1IT77ptn_a1BqMjzmX5sYZlUms3N54zaH/view?usp=drivesdk", lecture: "https://www.youtube.com/live/D_E1ri8PnYQ?si=YecB-wWoY5-6wgcg" },
+    "The Last Leaf": { notes: "https://drive.google.com/file/d/1o7TAvBha6LgdkefteMlK5bT-NNYXt8dO/view?usp=drivesdk", lecture: "https://www.youtube.com/live/D_E1ri8PnYQ?si=YecB-wWoY5-6wgcg" },
+    "A House Isn't a Home": { notes: "https://drive.google.com/file/d/1lFMlaghlpESsaksBYOfk_B36am25Qh5C/view?usp=drivesdk", lecture: "https://www.youtube.com/live/D_E1ri8PnYQ?si=YecB-wWoY5-6wgcg" },
+    "The Beggar": { notes: "https://drive.google.com/file/d/1bDmxhzwQEHziJGur-A5TuZRj0GDXWo-/view?usp=drivesdk", lecture: "https://www.youtube.com/live/D_E1ri8PnYQ?si=YecB-wWoY5-6wgcg" },
+
+    /* Grammar & Writing */
+    "Tenses": { notes: "https://drive.google.com/file/d/1chwfd8Kd7TX1SaF2nHIAAnbBFBKrNjYw/view?usp=drivesdk", lecture: "https://www.youtube.com/live/ITmcPHyes4Y?si=NGIGGvn9OzZ6kdAQ" },
+    "Modals": { notes: "https://drive.google.com/file/d/1iSlrYrCBPAc5fi4eI4uZX1nRZoUYl_jl/view?usp=drivesdk", lecture: "https://www.youtube.com/live/ITmcPHyes4Y?si=NGIGGvn9OzZ6kdAQ" },
+    "Subject Verb Agreement": { notes: "https://drive.google.com/file/d/1ao0Igxk3HvyUTd8DFB7KOKmhHKIqWh_0/view?usp=drivesdk", lecture: "https://www.youtube.com/live/ITmcPHyes4Y?si=NGIGGvn9OzZ6kdAQ" },
+    "Reported Speech": { notes: "https://drive.google.com/file/d/1hQnvZO1ZoWYY_3oK4QZANfCDrj0NAIzL/view?usp=drivesdk", lecture: "https://www.youtube.com/live/ITmcPHyes4Y?si=NGIGGvn9OzZ6kdAQ" },
+    "Determiners": { notes: "https://drive.google.com/file/d/1Ru72rxcN_5sU_p_qUh8vWVeghFX6m5J0/view?usp=drivesdk", lecture: "https://www.youtube.com/live/ITmcPHyes4Y?si=NGIGGvn9OzZ6kdAQ" },
+    "Descriptive Paragraph": { notes: "https://drive.google.com/file/d/1IuUxHRx9_VlblKJPGVvdCkbG58laW-4p/view?usp=drivesdk", lecture: "https://www.youtube.com/live/Ix7oAEcQGTs?si=dqYGU4WS7OJksnOg" },
+    "Story Writing": { notes: "https://drive.google.com/file/d/1JeNYVBZR-1Sb4dWSDnX4tKlyNOajFAgw/view?usp=drivesdk", lecture: "https://www.youtube.com/live/Ix7oAEcQGTs?si=dqYGU4WS7OJksnOg" },
+    "Diary Entry": { notes: "https://drive.google.com/file/d/1SoPB3oHmGCtH63c4hEGQhITtwobbGb2q/view?usp=drivesdk", lecture: "https://www.youtube.com/live/Ix7oAEcQGTs?si=dqYGU4WS7OJksnOg" }
+  },
+
+  "Social Science": {
+    "NCERT_History": { notes: ncertLinks["History"] },
+    "The French Revolution": { notes: "https://drive.google.com/file/d/16m0Vtk1_80grHn_cMj3SM7Q1C0xf_k5g/view?usp=drivesdk", lecture: "https://www.youtube.com/live/tP62GHfXYj8?si=gW4f-r2trebWw71Y" },
+    "Socialism In Europe and the Russian revolution": { notes: "https://drive.google.com/file/d/1M2F27VrXbzrBBWwGHtWfeZVIIQEPQV1Y/view?usp=drivesdk", lecture: "https://youtu.be/AcZW8kKZDGM?si=L3G-OoJkmmtFS0y5" },
+    "Nazims and the rise of Hitler": { notes: "https://drive.google.com/file/d/1trGYWgdE3e7QxYy4PdrZuL2yxung7zap/view?usp=drivesdk", lecture: "https://www.youtube.com/live/dBt1gRvRnQg?si=YARRiKOyBn9lAODs" },
+    "Forest society and Colonialism": { notes: "https://drive.google.com/file/d/1HQncCuz-EDQ6hNJmrUOD8db6JjMr9jYd/view?usp=drivesdk", lecture: "https://www.youtube.com/live/TTw8orrPGUw?si=-tfMDGPvjYcsAJTE" },
+    "Pastoralists in the morden world": { notes: "https://drive.google.com/file/d/1prHhietgW7ZOLqogpwZ0MKdVoMjKGPPA/view?usp=drivesdk", lecture: "https://www.youtube.com/live/IP8bR71pJ8A?si=ibsJqm3PeopDkWUS" },
+
+    "India size and location": { notes: "https://drive.google.com/file/d/1jV9fTIEW2ri8Ta72SDX_za0hS8XaK6Et/view?usp=drivesdk", lecture: "https://youtu.be/2wX5l1ksFr8?si=pcHyvCNJxLygrXIq" },
+    "Physical feature of India": { notes: "https://drive.google.com/file/d/1hG3w8MyT03qhbA0c4aT2oQP_CjwNKowP/view?usp=drivesdk", lecture: "https://youtu.be/pi7CKZ5WKp4?si=CiKTDI1Lpzu6jJwJ" },
+    "Drainage": { notes: "https://drive.google.com/file/d/1aXVR7HhmvVxXAgMCipfudAgJFWioHSeb/view?usp=drivesdk", lecture: "https://youtu.be/9XBLgkTx_Jc?si=f1LPLOTWjf8xhzRE" },
+    "Climate": { notes: "https://drive.google.com/file/d/16WGqgNFw8WjWr9V4MLBpQwP9DnjpQ9sq/view?usp=drivesdk", lecture: "https://youtu.be/sYao9OWPsx4?si=B1ZRhVHVLAvbictE" },
+    "Natural vegetation and wildlife": { notes: "https://drive.google.com/file/d/1q917B6DASonYkwfatdUfloqiOlu6J5if/view?usp=drivesdk", lecture: "https://youtu.be/tsHu4sB4cKE?si=cEMz0dj9YayBxbZF" },
+    "Population": { notes: "https://drive.google.com/file/d/1Db10D2ItcmU52AQZVdn8lKwCYNB8TiOo/view?usp=drivesdk", lecture: "https://youtu.be/sIxJyVjJlUE?si=tyQeU2D9XwZLZPl-" },
+
+    "What is democracy ? Why is democracy ?": { notes: "https://drive.google.com/file/d/1fsA9vKhtPclV06a50LQy1fe6swwxz7hm/view?usp=drivesdk", lecture: "https://youtu.be/XyW3vr-MS7Y?si=zt5TqtUbX2FFdoff" },
+    "Constitutional Design": { notes: "https://drive.google.com/file/d/1wofr4Q09H0fk6Bjo0psn0gqDvkw6EqVf/view?usp=drivesdk", lecture: "https://youtu.be/m3WErGwD2j4?si=mdKeUMStwxG7r_51" },
+    "Electoral Politics": { notes: "https://drive.google.com/file/d/1zsf9XV_0LyjFL0BcJ59U11We3RxzC6fh/view?usp=drivesdk", lecture: "https://youtu.be/7aNua4CvyYU?si=XCLUVNNfn7FXSmD_" },
+    "Work of institutions": { notes: "https://drive.google.com/file/d/1Y90uUqRtsuSBN-r_XoON9w4ZbI0S1FV0/view?usp=drivesdk", lecture: "https://youtu.be/ovIJ99CY7S0?si=6pbC2I_tGk-q8cK5" },
+    "Democratic Rights": { notes: "https://drive.google.com/file/d/1eWjUpgEgDExqotOYjfpsVAgS3X_lCFT3/view?usp=drivesdk", lecture: "https://youtu.be/0mjXgFkBJuU?si=aAwkNQhiw2ui1Xqb" },
+
+    "The story of village Palampur": { notes: "https://drive.google.com/file/d/1qSBtrEIA4K2DKYHYA4FK9mSlxySnjBSG/view?usp=drivesdk", lecture: "https://youtu.be/Fru9zOMPlZA?si=VA4wMZgLm8QkNZ6f" },
+    "People as resource": { notes: "https://drive.google.com/file/d/1irXXqFMdQN7O8ZKOm8RH-nwSLwEzOs-t/view?usp=drivesdk", lecture: "https://youtu.be/bmFxndPs46I?si=AALy55mMwTp3sbaa" },
+    "Poverty as a challenge": { notes: "https://drive.google.com/file/d/1XoytwKmHVlr7jkmLGh4H40vjJTv8ZecI/view?usp=drivesdk", lecture: "https://youtu.be/cRvLid7zyjM?si=zF22it_4JTrlcgKq" },
+    "Food security in India": { notes: "https://drive.google.com/file/d/1_qNVCbkoEzoAnzoJCAZfICivVOG1Pq_M/view?usp=drivesdk", lecture: "https://youtu.be/bejhawh0OA8?si=GTjgKwyAoblczggX" }
+  }
+};
+
+/* ================= State ================= */
+let currentSubject = "";
+let resourceType = "";
+
+/* =================== Open Resources (Notes, Lecture, etc.) - INSERTED FROM SAVED CODE =================== */
+function openResources(subject) {
+  // NOTE: This simple function is defined here, but will be REPLACED by the
+  // more complex version later in the script (which uses handleResourceClick).
+  if (LOCKED_SUBJECTS.has(subject)) return alert("Coming soon!");
+  showPanel('resourcesPanel');
+  $('resourceTitle').textContent = `${subject} Resources`;
+
+  const grid = $('resourceGrid');
+  grid.innerHTML = '';
+
+  // Show common resource buttons
+  commonResources.forEach(resourceType => {
+    const div = document.createElement('div');
+    div.className = 'resource';
+    div.textContent = resourceType;
+    div.onclick = () => openChapters(subject, resourceType);
+    grid.appendChild(div);
+  });
+}
+window.openResources = openResources;
+
+/* =================== Open Chapters for Selected Resource - INSERTED FROM SAVED CODE =================== */
+function openChapters(subject, resourceType) {
+  // NOTE: This simple function is defined here, but the complex logic (using showChapters)
+  // will prevent it from being called.
+  showPanel('chapterPanel');
+  $('chapterTitle').textContent = `${subject} - ${resourceType}`;
+
+  const grid = $('chapterGrid');
+  grid.innerHTML = '';
+
+  const subjectData = resourcesData[subject];
+  if (!subjectData) return alert("No data found for this subject.");
+
+  Object.entries(subjectData).forEach(([chapterName, chapterData]) => {
+    const div = document.createElement('div');
+    div.className = 'chapter';
+    div.textContent = chapterName;
+
+    div.onclick = () => {
+      let link = null;
+
+      // Make comparison case-insensitive
+      switch (resourceType.toLowerCase()) {
+        case "notes":
+          link = chapterData.notes;
+          break;
+        case "lecture":
+          link = chapterData.lecture;
+          break;
+        case "sample paper":
+          link = midTermLinks[subject];
+          break;
+        case "ncert pdf":
+          link = chapterData.notes;
+          break;
+        default:
+          link = null;
+      }
+
+      if (link) {
+        window.open(link, "_blank");
+      } else {
+        alert(`No ${resourceType} available for ${chapterName}`);
+      }
+    };
+
+    grid.appendChild(div);
+  });
+}
+window.openChapters = openChapters;
+
+/* =================== Back to Resource Panel - INSERTED FROM SAVED CODE =================== */
+function backToResources() {
+  showPanel('resourcesPanel');
+}
+window.backToResources = backToResources;
+
+/* ================= openResources (COMPLEX VERSION - THIS OVERWRITES THE SIMPLE ONE) ================= */
+window.openResources = (subject) => {
+  if(LOCKED_SUBJECTS.has(subject)){
+    alert(subject + " is locked / coming soon.");
+    return;
+  }
+  currentSubject = subject;
+  document.getElementById('resourceTitle').textContent = subject + " Resources 📂";
+  const grid = document.getElementById('resourceGrid');
+  grid.innerHTML = "";
+  commonResources.forEach(r=>{
+    const div = document.createElement('div');
+    div.className = 'resource';
+    div.textContent = r;
+    div.onclick = ()=> handleResourceClick(r);
+    grid.appendChild(div);
+  });
+  showPanel('resourcesPanel');
+};
+
+/* ================= handleResourceClick ================= */
+function handleResourceClick(r){
+  resourceType = r;
+
+  // Sample Paper flow
+  if(r === "Sample Paper"){
+    showChapters(["Mid Term","Final Term"]);
+    return;
+  }
+
+  // NCERT PDF direct open
+  if(r === "NCERT PDF"){
+    if(currentSubject === "Science" && ncertLinks["Science"]) window.open(ncertLinks["Science"], '_blank');
+    else if(currentSubject === "Math" && ncertLinks["Math"]) window.open(ncertLinks["Math"], '_blank');
+    else if(currentSubject === "English" && ncertLinks["EnglishBeehive"]) window.open(ncertLinks["EnglishBeehive"], '_blank');
+    else if(currentSubject === "Social Science" && ncertLinks["History"]) window.open(ncertLinks["History"], '_blank');
+    else alert(`NCERT for ${currentSubject} not available.`);
+    return;
+  }
+
+  // Lecture: show chapter list that have lecture links
+  if(r === "Lecture"){
+    if(currentSubject === "Science") showChapters(Object.keys(resourcesData["Science"]).filter(k=>k!=="NCERT"));
+    else if(currentSubject === "Math") showChapters(Object.keys(resourcesData["Math"]).filter(k=>k!=="NCERT"));
+    else if(currentSubject === "English") showChapters(Object.keys(resourcesData["English"]).filter(k=>!k.startsWith("NCERT")));
+    else if(currentSubject === "Social Science") showChapters(Object.keys(resourcesData["Social Science"]).filter(k=>!k.startsWith("NCERT")));
+    else alert(`${r} for ${currentSubject} coming soon!`);
+    return;
+  }
+
+  // Notes -> show chapters with notes
+  if(r === "Notes"){
+    if(currentSubject === "Science") showChapters(Object.keys(resourcesData["Science"]).filter(k=>k!=="NCERT"));
+    else if(currentSubject === "Math") showChapters(Object.keys(resourcesData["Math"]).filter(k=>k!=="NCERT"));
+    else if(currentSubject === "English") showChapters(Object.keys(resourcesData["English"]).filter(k=>!k.startsWith("NCERT")));
+    else if(currentSubject === "Social Science"){
+      showChapters([
+        { name: "History", chapters: ["The French Revolution","Socialism In Europe and the Russian revolution","Nazims and the rise of Hitler","Forest society and Colonialism","Pastoralists in the morden world"] },
+        { name: "Geography", chapters: ["India size and location","Physical feature of India","Drainage","Climate","Natural vegetation and wildlife","Population"] },
+        { name: "Civics", chapters: ["What is democracy ? Why is democracy ?","Constitutional Design","Electoral Politics","Work of institutions","Democratic Rights"] },
+        { name: "Economics", chapters: ["The story of village Palampur","People as resource","Poverty as a challenge","Food security in India"] }
+      ]);
+    } else alert(`${r} for ${currentSubject} coming soon!`);
+    return;
+  }
+
+  alert(`${r} for ${currentSubject} coming soon!`);
+}
+
+/* ================= showChapters (renders array of strings or nested objects) ================= */
+window.showChapters = function(list){
+  document.getElementById('chapterTitle').textContent = `${resourceType}` + (currentSubject ? ` - ${currentSubject}` : "");
+  const grid = document.getElementById('chapterGrid');
+  grid.innerHTML = "";
+
+  // Sample Paper: show Mid/Final terms
+  if(resourceType === "Sample Paper" && Array.isArray(list) && list.includes("Mid Term")){
+    document.getElementById('chapterTitle').textContent = `Sample Paper - Choose Term`;
+    list.forEach(item=>{
+      const d = document.createElement('div');
+      d.className = 'chapter';
+      d.textContent = item;
+      d.onclick = ()=> {
+        if(item === "Mid Term"){
+          showChapters(["Hindi","Math","Social Science","Sanskrit","Science","English"]);
+        } else {
+          alert("Final Term sample papers coming soon!");
+        }
+      };
+      grid.appendChild(d);
+    });
+    showPanel('chapterPanel');
+    return;
+  }
+
+  // Sample Paper second step: subjects -> open midTerm PDF
+  if(resourceType === "Sample Paper" && Array.isArray(list) && list.every(i => typeof i === 'string')) {
+    document.getElementById('chapterTitle').textContent = `Sample Paper - Mid Term`;
+    list.forEach(sub=>{
+      const d = document.createElement('div');
+      d.className = 'chapter';
+      d.textContent = sub;
+      d.onclick = ()=> {
+        const url = midTermLinks[sub];
+        if(url) window.open(url, '_blank', 'noopener');
+        else alert(`PDF for ${sub} not available.`);
+      };
+      grid.appendChild(d);
+    });
+    showPanel('chapterPanel');
+    return;
+  }
+
+  // Normal rendering
+  list.forEach(item=>{
+    const div = document.createElement('div');
+    if(typeof item === 'object' && item.name){
+      div.className = item.locked ? 'chapter disabled' : 'chapter';
+      div.textContent = item.name;
+      if(!item.locked){
+        div.onclick = ()=> {
+          if(item.chapters && item.chapters.length) showChapters(item.chapters);
+          else alert(`Chapters for ${item.name} coming soon!`);
+        };
+      }
+    } else {
+      div.className = 'chapter';
+      div.textContent = item;
+      div.onclick = ()=> {
+        // nested english flows
+        if(currentSubject === "English" && item === "Beehive") showChapters(["Prose","Poem"]);
+        else if(currentSubject === "English" && item === "Moments") showChapters(["The Lost Child","The Adventure of Toto","Iswaran the Story Teller","In the Kingdom of Fools","The Happy Prince","Weathering the Storm in Ersama","The Last Leaf","A House Isn't a Home","The Beggar"]);
+        else if(currentSubject === "English" && (item === "Prose" || item === "Poem")) {
+          // if somehow clicked string Prose/Poem; map to lists
+          if(item==="Prose") showChapters(["The Fun They Had","The Sound of Music","The Little Girl","A Truly Beautiful Mind","The Snake and the Mirror","My Childhood","Reach for the Top","Kathmandu","If I Were You"]);
+          else showChapters(["The Road Not Taken","Wind","Rain on the Roof","The Lake Isle of Innisfree","A Legend of the Northland","No Men Are Foreign","On Killing a Tree","A Slumber Did My Spirit Seal"]);
+        }
+        // english grammar & writing
+        else if(currentSubject === "English" && ["Grammar","Writing Skills","Tenses","Modals","Subject Verb Agreement","Reported Speech","Determiners","Descriptive Paragraph","Story Writing","Diary Entry"].includes(item)){
+          showDetails(currentSubject, item);
+        }
+        // hindi nested
+        else if(currentSubject === "Hindi" && item === "क्षितिज") showChapters([{ name: "गद्य खंड", chapters: ["दो बैलों की कथा","ल्हासा की ओर","उपभोक्तावाद की संस्कृति","साँवले सपने की याद","प्रेमचंद के फटे जूते","मेरे बचपन के दिन"] }, { name: "काव्य खंड", chapters: ["साखियाँ एवं सबद","वाख","सवैये","कैदी और कोकिला","ग्राम श्री","मेघ आए","बच्चे काम पर जा रहे हैं"] }]);
+        else if(currentSubject === "Hindi" && item === "कृतिका") showChapters(["इस जल प्रलय में","मेरे संग की औरतें","रीड की हड्डी"]);
+        // sanskrit nested
+        else if(currentSubject === "Sanskrit" && item === "शेमुषी") showChapters(["भारतीवसधतगीतिः","स्वणकाकः","गोदोहनम्","सूक्तिमौक्तिकम्","भ्रान्तो बालः","सिकतासेतुः","जटायोः र्शौयम्","पर्यावरणम्","वाङ्मनः प्राणस्वरूपम्"]);
+        else {
+          // default: show chapter details (notes/lecture if exists)
+          showDetails(currentSubject, item);
+        }
+      };
+    }
+    grid.appendChild(div);
+  });
+
+  showPanel('chapterPanel');
+};
+
+/* ================= showDetails: shows buttons/links for notes & lecture ================= */
+function showDetails(subject, chapter){
+  const detailPanel = $('detailPanel');
+  const detailTitle = $('detailTitle');
+  const detailContent = $('detailContent');
+
+  // find resource object
+  let res = null;
+  if(subject === "Science") res = resourcesData["Science"][chapter];
+  else if(subject === "Math") res = resourcesData["Math"][chapter];
+  else if(subject === "English") res = resourcesData["English"][chapter];
+  else if(subject === "Social Science") res = resourcesData["Social Science"][chapter];
+
+  // fallback for NCERT shortcuts
+  if(!res){
+    if(subject === "Science" && chapter === "NCERT") res = { notes: ncertLinks["Science"] };
+    else if(subject === "Math" && chapter === "NCERT") res = { notes: ncertLinks["Math"] };
+    else if(subject === "English" && (chapter === "Beehive" || chapter === "NCERT_Beehive")) res = { notes: ncertLinks["EnglishBeehive"] };
+    else if(subject === "English" && (chapter === "Moments" || chapter === "NCERT_Moments")) res = { notes: ncertLinks["Moments"] };
+    else if(subject === "Social Science" && chapter.startsWith("NCERT")) res = { notes: ncertLinks["History"] };
+  }
+
+  // If panel elements are missing, fallback to alert/direct-open
+  if(!detailPanel || !detailContent || !detailTitle){
+    if(res && res.notes) window.open(res.notes, '_blank', 'noopener');
+    else if(res && res.lecture) window.open(res.lecture, '_blank', 'noopener');
+    else alert(`Resources for "${chapter}" not available yet.`);
+    return;
+  }
+
+  detailTitle.textContent = `${chapter}` + (subject ? ` — ${subject}` : "");
+  detailContent.innerHTML = "";
+
+  if(!res){
+    const p = document.createElement('p');
+    p.textContent = 'Resources not available for this chapter yet.';
+    detailContent.appendChild(p);
+    showPanel('detailPanel');
+    return;
+  }
+
+  if(res.notes){
+    const a = document.createElement('a');
+    a.href = res.notes;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.className = 'resource-link';
+    a.textContent = '📄 Open Notes / PDF';
+    detailContent.appendChild(a);
+  }
+  if(res.lecture){
+    const b = document.createElement('a');
+    b.href = res.lecture;
+    b.target = '_blank';
+    b.rel = 'noopener noreferrer';
+    b.className = 'resource-link';
+    b.style.display = 'block';
+    b.textContent = '🎥 Watch Lecture';
+    detailContent.appendChild(b);
+  }
+
+  showPanel('detailPanel');
+}
+
+/* ================= Back helpers (COMPLEX VERSION - THESE OVERWRITE THE SIMPLE ONES) ================= */
+// Back button from Chapter Panel to Resources Panel
+window.backToResources = ()=> showPanel('resourcesPanel');
+// Back button from Detail Panel to Chapter Panel (NEW)
+window.backToChapters = ()=> showPanel('chapterPanel');
+
+
+/* ================= Auth wrapper functions (exposed to HTML if buttons use onclick) ================= */
+window.signIn = async ()=> {
+  try{
+    const email = ($('loginEmail') || {}).value || '';
+    const pass = ($('loginPass') || {}).value || '';
+    await signInWithEmailAndPassword(auth, email, pass);
+    showPanel('homePanel');
+  }catch(e){ alert(e.message || 'Login failed'); console.error(e); }
+};
+window.signUp = async ()=> {
+  try{
+    const email = ($('signupEmail') || {}).value || '';
+    const pass = ($('signupPass') || {}).value || '';
+    await createUserWithEmailAndPassword(auth, email, pass);
+    alert("🎉 Account created!");
+    showPanel('homePanel');
+  }catch(e){ alert(e.message || 'Signup failed'); console.error(e); }
+};
+window.forgotPass = async ()=> {
+  try{
+    const email = ($('resetEmail') || {}).value || '';
+    if(!email){ alert('Enter email in the reset box or use Forgot password flow'); return; }
+    await sendPasswordResetEmail(auth, email);
+    alert("Reset link sent!");
+    showPanel('loginPanel');
+  }catch(e){ alert(e.message || 'Reset failed'); console.error(e); }
+};
+window.logOut = async ()=> {
+  try{ await signOut(auth); showPanel('loginPanel'); } catch(e){ console.error(e); showPanel('loginPanel'); }
+};
+
+/* ================= Final: export some useful functions globally for existing HTML onclick handlers ================= */
+window.showDetails = showDetails;
+window.resourcesData = resourcesData;
+window.midTermLinks = midTermLinks;
+window.ncertLinks = ncertLinks;
+
+</script>
+</body>
+</html>
