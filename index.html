@@ -213,7 +213,9 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
-  signOut
+  signOut,
+  // --- SESSION PERSISTENCE IMPORTS ADDED ---
+  browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
 /* ================= Firebase config (your keys) ================= */
@@ -275,14 +277,14 @@ const englishMoments = ["The Lost Child","The Adventure of Toto","Iswaran the St
 const englishGrammar = ["Tenses","Modals","Subject Verb Agreement","Reported Speech","Determiners"];
 const englishWriting = ["Descriptive Paragraph","Story Writing","Diary Entry"];
 
-/* ================= Mid Term sample PDF links (UPDATED ALL LINKS) ================= */
+/* ================= Mid Term sample PDF links ================= */
 const midTermLinks = {
   "Hindi": "#", 
-  "Math": "https://drive.google.com/file/d/1RXErUPe88EHX9iX96TMRUtY8VgY9Kl30/preview", // Updated
-  "Social Science": "https://drive.google.com/file/d/1XffZ0NTTQRzdZLgqNfW44O7BCrvp3xfY/preview", // Updated
+  "Math": "https://drive.google.com/file/d/1RXErUPe88EHX9iX96TMRUtY8VgY9Kl30/preview",
+  "Social Science": "https://drive.google.com/file/d/1XffZ0NTTQRzdZLgqNfW44O7BCrvp3xfY/preview",
   "Sanskrit": "#", 
-  "Science": "https://drive.google.com/file/d/170iyNSKrkI7p2LJAmITMnOw3e96o01yb/preview", // Updated
-  "English": "https://drive.google.com/file/d/1jIStqigsAEtvZxr4q78gcqd0lGx-a8qc/preview" // Updated
+  "Science": "https://drive.google.com/file/d/170iyNSKrkI7p2LJAmITMnOw3e96o01yb/preview",
+  "English": "https://drive.google.com/file/d/1jIStqigsAEtvZxr4q78gcqd0lGx-a8qc/preview"
 };
 
 
@@ -309,7 +311,7 @@ const resourcesData = {
     "The Fundamental Unit of Life": { notes: "no-notes-link", lecture: "no-lecture-link" },
     "Tissue": { notes: "no-notes-link", lecture: "no-lecture-link" },
     "Motion": { notes: "no-notes-link", lecture: "no-lecture-link" },
-    "Force and Law of Motion": { notes: "no-notes-link", lecture: "no-lecture-link" },
+    "Force and Law of Motion": { notes: "no-lecture-link", lecture: "no-lecture-link" },
     "Gravitation": { notes: "no-notes-link", lecture: "no-lecture-link" },
     "Work, Power and Energy": { notes: "no-notes-link", lecture: "no-lecture-link" },
     "Sound": { notes: "no-notes-link", lecture: "no-lecture-link" },
@@ -637,12 +639,16 @@ function showDetails(subject, chapter){
   showPanel('detailPanel');
 }
 
-/* ================= Auth Helpers ================= */
+/* ================= Auth Helpers (UPDATED) ================= */
 
 window.signIn = async ()=> {
   try{
     const email = ($('loginEmail') || {}).value || '';
     const pass = ($('loginPass') || {}).value || '';
+
+    // Set Persistence to LOCAL (keeps the user logged in indefinitely until explicitly signed out)
+    await auth.setPersistence(browserLocalPersistence);
+    
     await signInWithEmailAndPassword(auth, email, pass);
     
     window.history.replaceState({ panelId: 'homePanel' }, '', '#homePanel');
@@ -653,6 +659,10 @@ window.signUp = async ()=> {
   try{
     const email = ($('signupEmail') || {}).value || '';
     const pass = ($('signupPass') || {}).value || '';
+    
+    // Set Persistence to LOCAL for new sign-ups as well
+    await auth.setPersistence(browserLocalPersistence);
+
     await createUserWithEmailAndPassword(auth, email, pass);
     alert("🎉 Account created!");
     
