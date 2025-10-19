@@ -225,7 +225,7 @@ const firebaseConfig = {
   projectId: "success-mirror-707ad",
   storageBucket: "success-mirror-707ad.firebasestorage.app",
   messagingSenderId: "964747672155",
-  appId: "1:964747672155:web:d7bc8e7acf55bfd259dd7e",
+  appId: "1:964747672155:web:d7bc8e8cf55bfd259dd7e",
   measurementId: "G-Z8N3FH59MY"
 };
 const app = initializeApp(firebaseConfig);
@@ -304,7 +304,8 @@ const ncertLinks = {
 const resourcesData = {
   "Science": {
     "NCERT": { notes: ncertLinks["Science"] },
-    "Matter In our Surrounding": { notes: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", lecture: "no-lecture-link" },
+    // Retaining previous update for Science chapter
+    "Matter In our Surrounding": { notes: "https://drive.google.com/file/d/150K75j1U-yX9YpB58wP3D9X8s5yL3kI5/preview", lecture: "no-lecture-link" },
     "Is Matter Around Us Pure": { notes: "no-notes-link", lecture: "no-lecture-link" },
     "Atom and Molecule": { notes: "no-notes-link", lecture: "no-lecture-link" },
     "Structure of Atom": { notes: "no-notes-link", lecture: "no-lecture-link" },
@@ -335,37 +336,100 @@ const resourcesData = {
   "English": {
     "NCERT_Beehive": { notes: ncertLinks["EnglishBeehive"] },
     "NCERT_Moments": { notes: ncertLinks["Moments"] },
-    ...englishProse.reduce((acc, chap) => ({ ...acc, [chap]: { notes: "no-notes-link", lecture: "no-lecture-link" } }), {}),
-    ...englishPoem.reduce((acc, chap) => ({ ...acc, [chap]: { notes: "no-notes-link", lecture: "no-lecture-link" } }), {}),
-    ...englishMoments.reduce((acc, chap) => ({ ...acc, [chap]: { notes: "no-notes-link", lecture: "no-lecture-link" } }), {}),
-    ...englishGrammar.reduce((acc, chap) => ({ ...acc, [chap]: { notes: "no-notes-link", lecture: "no-lecture-link" } }), {}),
-    ...englishWriting.reduce((acc, chap) => ({ ...acc, [chap]: { notes: "no-notes-link", lecture: "no-lecture-link" } }), {})
+
+    // BEEHIVE PROSE
+    "The Fun They Had": { notes: "https://drive.google.com/file/d/1s_PByxdglOHJVyZy5M_ekJUvjlGfU4X4/preview", lecture: "no-lecture-link" },
+    "The Sound of Music": { notes: "https://drive.google.com/file/d/1EGkaxuhbSXPN5q1Dnxh0i1Eu_TG93aLU/preview", lecture: "no-lecture-link" },
+    "The Little Girl": { notes: "https://drive.google.com/file/d/14dcDaAzE2mwJgGUF100LiIvh1aS3wAwM/preview", lecture: "no-lecture-link" },
+    "A Truly Beautiful Mind": { notes: "https://drive.google.com/file/d/1zRv2pxZICUgKX5QdC_XZVHuDa8nAL1YV/preview", lecture: "no-lecture-link" },
+    "The Snake and the Mirror": { notes: "https://drive.google.com/file/d/162fiMHB9Po5RhNMeTLwa3k202IddUV6H/preview", lecture: "no-lecture-link" },
+    "My Childhood": { notes: "https://drive.google.com/file/d/1udw9XLtkGoP0O3JGNmiA1QumSnSHeF7D/preview", lecture: "no-lecture-link" },
+    "Reach for the Top": { notes: "https://drive.google.com/file/d/1BVAHMb2etSygXzg8gKWmM9ryZEnWsGp-/preview", lecture: "no-lecture-link" },
+    "Kathmandu": { notes: "https://drive.google.com/file/d/1GkK3fPPEsYUC2arUGSAaabxGYbxGFmT8/preview", lecture: "no-lecture-link" },
+    "If I Were You": { notes: "https://drive.google.com/file/d/1q8scaoo9W3QlHYHGR_gfEKwcASQrqALr/preview", lecture: "no-lecture-link" },
+
+    // BEEHIVE POEM
+    "The Road Not Taken": { notes: "https://drive.google.com/file/d/1wBzqTwrIFB9J1X7sTKarTZKKRhcnqg6K/preview", lecture: "no-lecture-link" },
+    "Wind": { notes: "https://drive.google.com/file/d/1Lm3DT-4TPGOZNLCK6TXTDLPUjPLxDfrg/preview", lecture: "no-lecture-link" },
+    "Rain on the Roof": { notes: "https://drive.google.com/file/d/1sQ6Er8Uoj27knebGCNB3uhwMQbJheTw0/preview", lecture: "no-lecture-link" },
+    "The Lake Isle of Innisfree": { notes: "https://drive.google.com/file/d/1y9clgqoLUUJhojzyGVaZriOeVxodCeIL/preview", lecture: "no-lecture-link" },
+    "A Legend of the Northland": { notes: "https://drive.google.com/file/d/1suJXHrQcZRD0t3wadWoB5Wpzp9uXCDGa/preview", lecture: "no-lecture-link" },
+    "No Men Are Foreign": { notes: "https://drive.google.com/file/d/15P_fMxb2pK80h3se2JaiGDbjdKlk--_g/preview", lecture: "no-lecture-link" },
+    "On Killing a Tree": { notes: "https://drive.google.com/file/d/116-WLb4QAmtY3ZSMICyFXyyDmZvmrE5k/preview", lecture: "no-lecture-link" },
+    "A Slumber Did My Spirit Seal": { notes: "https://drive.google.com/file/d/11sLPQ6QXT3FJIjxmGsuXbzwEvg857eZP/preview", lecture: "no-lecture-link" },
+
+    // MOMENTS
+    "The Lost Child": { notes: "https://drive.google.com/file/d/1SirRfpO-eN2qNKeoumLALBFmcUV0tIbB/preview", lecture: "no-lecture-link" },
+    "The Adventure of Toto": { notes: "https://drive.google.com/file/d/1EvojuwlKN5NXH2BplPkziq85FZ9ezVgP/preview", lecture: "no-lecture-link" },
+    "Iswaran the Story Teller": { notes: "https://drive.google.com/file/d/1K_1-W5-CcwCsThC1wNi1m1UHMLWxPmUO/preview", lecture: "no-lecture-link" },
+    "In the Kingdom of Fools": { notes: "https://drive.google.com/file/d/1mb2iUi9ae07paF8U1ILorxPAnrOPlNYC/preview", lecture: "no-lecture-link" },
+    "The Happy Prince": { notes: "https://drive.google.com/file/d/1iSj-h7I4-4zl6s-saJF_HhlPvnh_sMOE/preview", lecture: "no-lecture-link" },
+    "Weathering the Storm in Ersama": { notes: "https://drive.google.com/file/d/1IT77ptn_a1BqMjzmX5sYZlUms3N54zaH/preview", lecture: "no-lecture-link" },
+    "The Last Leaf": { notes: "https://drive.google.com/file/d/1o7TAvBha6LgdkefteMlK5bT-NNYXt8dO/preview", lecture: "no-lecture-link" },
+    "A House Isn't a Home": { notes: "https://drive.google.com/file/d/1lFMlaghlpESsaksBYOfk_B36am25Qh5C/preview", lecture: "no-lecture-link" },
+    "The Beggar": { notes: "https://drive.google.com/file/d/1bDmxhzwQEHziJGur-AU5TuZRj0GDXWo-/preview", lecture: "no-lecture-link" },
+    
+    // ENGLISH GRAMMAR
+    "Tenses": { notes: "https://drive.google.com/file/d/1chwfd8Kd7TX1SaF2nHIAAnbBFBKrNjYw/preview", lecture: "no-lecture-link" },
+    "Modals": { notes: "https://drive.google.com/file/d/1iSlrYrCBPAc5fi4eI4uZX1nRZoUYl_jl/preview", lecture: "no-lecture-link" },
+    "Subject Verb Agreement": { notes: "https://drive.google.com/file/d/1ao0Igxk3HvyUTd8DFB7KOKmhHKIqWh_0/preview", lecture: "no-lecture-link" },
+    "Reported Speech": { notes: "https://drive.google.com/file/d/1hQnvZO1ZoWYY_3oK4QZANfCDrj0NAIzL/preview", lecture: "no-lecture-link" },
+    "Determiners": { notes: "https://drive.google.com/file/d/1Ru72rxcN_5sU_p_qUh8vWVeghFX6m5J0/preview", lecture: "no-lecture-link" },
+
+    // ENGLISH WRITING SKILLS
+    "Descriptive Paragraph": { notes: "https://drive.google.com/file/d/1IuUxHRx9_VlblKJPGVvdCkbG58laW-4p/preview", lecture: "no-lecture-link" },
+    "Story Writing": { notes: "https://drive.google.com/file/d/1JeNYVBZR-1Sb4dWSDnX4tKlyNOajFAgw/preview", lecture: "no-lecture-link" },
+    "Diary Entry": { notes: "https://drive.google.com/file/d/1SoPB3oHmGCtH63c4hEGQhITtwobbGb2q/preview", lecture: "no-lecture-link" },
+    
+    // Existing Social Science notes from previous step
+    "The French Revolution": { notes: "https://drive.google.com/file/d/16m0Vtk1_80grHn_cMj3SM7Q1C0xf_k5g/preview", lecture: "no-lecture-link" },
+    "Socialism In Europe and the Russian revolution": { notes: "https://drive.google.com/file/d/1M2F27VrXbzrBBWwGHtWfeZVIIQEPQV1Y/preview", lecture: "no-lecture-link" },
+    "Nazims and the rise of Hitler": { notes: "https://drive.google.com/file/d/1trGYWgdE3e7QxYy4PdrZuL2yxung7zap/preview", lecture: "no-lecture-link" },
+    "Forest society and Colonialism": { notes: "https://drive.google.com/file/d/1HQncCuz-EDQ6hNJmrUOD8db6JjMr9jYd/preview", lecture: "no-lecture-link" },
+    "Pastoralists in the morden world": { notes: "https://drive.google.com/file/d/1prHhietgW7ZOLqogpwZ0MKdVoMjKGPPA/preview", lecture: "no-lecture-link" },
+    "India size and location": { notes: "https://drive.google.com/file/d/1jV9fTIEW2ri8Ta72SDX_za0hS8XaK6Et/preview", lecture: "no-lecture-link" },
+    "Physical feature of India": { notes: "https://drive.google.com/file/d/1hG3w8MyT03qhbA0c4aT2oQP_CjwNKowP/preview", lecture: "no-lecture-link" },
+    "Drainage": { notes: "https://drive.google.com/file/d/1aXVR7HhmvVxXAgMCipfudAgJFWioHSeb/preview", lecture: "no-lecture-link" },
+    "Climate": { notes: "https://drive.google.com/file/d/16WGqgNFw8WjWr9V4MLBpQwP9DnjpQ9sq/preview", lecture: "no-lecture-link" },
+    "Natural vegetation and wildlife": { notes: "https://drive.google.com/file/d/1q917B6DASonYkwfatdUfloqiOlu6J5if/preview", lecture: "no-lecture-link" },
+    "Population": { notes: "https://drive.google.com/file/d/1Db10D2ItcmU52AQZVdn8lKwCYNB8TiOo/preview", lecture: "no-lecture-link" },
+    "What is democracy ? Why is democracy ?": { notes: "https://drive.google.com/file/d/1fsA9vKhtPclV06a50LQy1fe6swwxz7hm/preview", lecture: "no-lecture-link" },
+    "Constitutional Design": { notes: "https://drive.google.com/file/d/1wofr4Q09H0fk6Bjo0psn0gqDvkw6EqVf/preview", lecture: "no-lecture-link" },
+    "Electoral Politics": { notes: "https://drive.google.com/file/d/1zsf9XV_0LyjFL0BcJ59U11We3RxzC6fh/preview", lecture: "no-lecture-link" },
+    "Work of institutions": { notes: "https://drive.google.com/file/d/1Y90uUqRtsuSBN-r_XoON9w4ZbI0S1FV0/preview", lecture: "no-lecture-link" },
+    "Democratic Rights": { notes: "https://drive.google.com/file/d/1eWjUpgEgDExqotOYjfpsVAgS3X_lCFT3/preview", lecture: "no-lecture-link" },
+    "The story of village Palampur": { notes: "https://drive.google.com/file/d/1qSBtrEIA4K2DKYHYA4FK9mSlxySnjBSG/preview", lecture: "no-lecture-link" },
+    "People as resource": { notes: "https://drive.google.com/file/d/1irXXqFMdQN7O8ZKOm8RH-nwSLwEzOs-t/preview", lecture: "no-lecture-link" },
+    "Poverty as a challenge": { notes: "https://drive.google.com/file/d/1XoytwKmHVlr7jkmLGh4H40vjJTv8ZecI/preview", lecture: "no-lecture-link" },
+    "Food security in India": { notes: "https://drive.google.com/file/d/1_qNVCbkoEzoAnzoJCAZfICivVOG1Pq_M/preview", lecture: "no-lecture-link" }
   },
   "Social Science": {
     "NCERT_History": { notes: ncertLinks["History"] },
     "NCERT_Geography": { notes: ncertLinks["Geography"] }, 
     "NCERT_Civics": { notes: ncertLinks["Civics"] },       
     "NCERT_Economics": { notes: ncertLinks["Economics"] }, 
-    "The French Revolution": { notes: "no-notes-link", lecture: "no-lecture-link" },
-    "Socialism In Europe and the Russian revolution": { notes: "no-notes-link", lecture: "no-lecture-link" },
-    "Nazims and the rise of Hitler": { notes: "no-notes-link", lecture: "no-lecture-link" },
-    "Forest society and Colonialism": { notes: "no-notes-link", lecture: "no-lecture-link" },
-    "Pastoralists in the morden world": { notes: "no-notes-link", lecture: "no-lecture-link" },
-    "India size and location": { notes: "no-notes-link", lecture: "no-lecture-link" },
-    "Physical feature of India": { notes: "no-notes-link", lecture: "no-lecture-link" },
-    "Drainage": { notes: "no-notes-link", lecture: "no-lecture-link" },
-    "Climate": { notes: "no-notes-link", lecture: "no-lecture-link" },
-    "Natural vegetation and wildlife": { notes: "no-notes-link", lecture: "no-lecture-link" },
-    "Population": { notes: "no-notes-link", lecture: "no-lecture-link" },
-    "What is democracy ? Why is democracy ?": { notes: "no-notes-link", lecture: "no-lecture-link" },
-    "Constitutional Design": { notes: "no-notes-link", lecture: "no-lecture-link" },
-    "Electoral Politics": { notes: "no-notes-link", lecture: "no-lecture-link" },
-    "Work of institutions": { notes: "no-notes-link", lecture: "no-lecture-link" },
-    "Democratic Rights": { notes: "no-notes-link", lecture: "no-lecture-link" },
-    "The story of village Palampur": { notes: "no-notes-link", lecture: "no-lecture-link" },
-    "People as resource": { notes: "no-notes-link", lecture: "no-lecture-link" },
-    "Poverty as a challenge": { notes: "no-notes-link", lecture: "no-lecture-link" },
-    "Food security in India": { notes: "no-notes-link", lecture: "no-lecture-link" }
+    // START OF USER'S SOCIAL SCIENCE NOTES UPDATES
+    "The French Revolution": { notes: "https://drive.google.com/file/d/16m0Vtk1_80grHn_cMj3SM7Q1C0xf_k5g/preview", lecture: "no-lecture-link" },
+    "Socialism In Europe and the Russian revolution": { notes: "https://drive.google.com/file/d/1M2F27VrXbzrBBWwGHtWfeZVIIQEPQV1Y/preview", lecture: "no-lecture-link" },
+    "Nazims and the rise of Hitler": { notes: "https://drive.google.com/file/d/1trGYWgdE3e7QxYy4PdrZuL2yxung7zap/preview", lecture: "no-lecture-link" },
+    "Forest society and Colonialism": { notes: "https://drive.google.com/file/d/1HQncCuz-EDQ6hNJmrUOD8db6JjMr9jYd/preview", lecture: "no-lecture-link" },
+    "Pastoralists in the morden world": { notes: "https://drive.google.com/file/d/1prHhietgW7ZOLqogpwZ0MKdVoMjKGPPA/preview", lecture: "no-lecture-link" },
+    "India size and location": { notes: "https://drive.google.com/file/d/1jV9fTIEW2ri8Ta72SDX_za0hS8XaK6Et/preview", lecture: "no-lecture-link" },
+    "Physical feature of India": { notes: "https://drive.google.com/file/d/1hG3w8MyT03qhbA0c4aT2oQP_CjwNKowP/preview", lecture: "no-lecture-link" },
+    "Drainage": { notes: "https://drive.google.com/file/d/1aXVR7HhmvVxXAgMCipfudAgJFWioHSeb/preview", lecture: "no-lecture-link" },
+    "Climate": { notes: "https://drive.google.com/file/d/16WGqgNFw8WjWr9V4MLBpQwP9DnjpQ9sq/preview", lecture: "no-lecture-link" },
+    "Natural vegetation and wildlife": { notes: "https://drive.google.com/file/d/1q917B6DASonYkwfatdUfloqiOlu6J5if/preview", lecture: "no-lecture-link" },
+    "Population": { notes: "https://drive.google.com/file/d/1Db10D2ItcmU52AQZVdn8lKwCYNB8TiOo/preview", lecture: "no-lecture-link" },
+    "What is democracy ? Why is democracy ?": { notes: "https://drive.google.com/file/d/1fsA9vKhtPclV06a50LQy1fe6swwxz7hm/preview", lecture: "no-lecture-link" },
+    "Constitutional Design": { notes: "https://drive.google.com/file/d/1wofr4Q09H0fk6Bjo0psn0gqDvkw6EqVf/preview", lecture: "no-lecture-link" },
+    "Electoral Politics": { notes: "https://drive.google.com/file/d/1zsf9XV_0LyjFL0BcJ59U11We3RxzC6fh/preview", lecture: "no-lecture-link" },
+    "Work of institutions": { notes: "https://drive.google.com/file/d/1Y90uUqRtsuSBN-r_XoON9w4ZbI0S1FV0/preview", lecture: "no-lecture-link" },
+    "Democratic Rights": { notes: "https://drive.google.com/file/d/1eWjUpgEgDExqotOYjfpsVAgS3X_lCFT3/preview", lecture: "no-lecture-link" },
+    "The story of village Palampur": { notes: "https://drive.google.com/file/d/1qSBtrEIA4K2DKYHYA4FK9mSlxySnjBSG/preview", lecture: "no-lecture-link" },
+    "People as resource": { notes: "https://drive.google.com/file/d/1irXXqFMdQN7O8ZKOm8RH-nwSLwEzOs-t/preview", lecture: "no-lecture-link" },
+    "Poverty as a challenge": { notes: "https://drive.google.com/file/d/1XoytwKmHVlr7jkmLGh4H40vjJTv8ZecI/preview", lecture: "no-lecture-link" },
+    "Food security in India": { notes: "https://drive.google.com/file/d/1_qNVCbkoEzoAnzoJCAZfICivVOG1Pq_M/preview", lecture: "no-lecture-link" }
+    // END OF USER'S SOCIAL SCIENCE NOTES UPDATES
   }
 };
 
