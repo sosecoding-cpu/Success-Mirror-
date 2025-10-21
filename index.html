@@ -215,7 +215,8 @@ import {
   sendPasswordResetEmail,
   signOut,
   // --- SESSION PERSISTENCE IMPORTS ADDED ---
-  browserLocalPersistence
+  browserLocalPersistence,
+  onAuthStateChanged // <-- NEW IMPORT
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
 /* ================= Firebase config (your keys) ================= */
@@ -259,11 +260,34 @@ window.addEventListener('popstate', (event) => {
 window.openHomePanel = () => showPanel('homePanel');
 
 
-/* ================= Splash → login timing ================= */
-setTimeout(()=>{ 
-    window.history.replaceState({ panelId: 'loginPanel' }, '', '#loginPanel');
-    showPanel('loginPanel', true); 
-}, 4200);
+/* ================= Splash logic and Initial Panel Display (UPDATED) ================= */
+function checkAuthStateAndLoad() {
+    // Check the current confirmed login status
+    const user = auth.currentUser;
+
+    if (user) {
+        // User is logged in, redirect to homePanel
+        window.history.replaceState({ panelId: 'homePanel' }, '', '#homePanel');
+        showPanel('homePanel', true);
+    } else {
+        // No user logged in, proceed to loginPanel
+        window.history.replaceState({ panelId: 'loginPanel' }, '', '#loginPanel');
+        showPanel('loginPanel', true);
+    }
+}
+
+// Wait for Firebase to confirm the login status, then run the splash timer.
+const unsubscribe = onAuthStateChanged(auth, user => {
+    // Stop listening after the initial state is confirmed
+    unsubscribe(); 
+
+    // Keep the splash delay, but now it transitions to the correct panel based on login status
+    setTimeout(() => {
+        checkAuthStateAndLoad();
+    }, 4200); 
+});
+/* ================= END OF UPDATED SPLASH LOGIC ================= */
+
 
 /* ================= App Configuration ================= */
 const LOCKED_SUBJECTS = new Set(["Hindi","Sanskrit","AI / IT / PE"]);
